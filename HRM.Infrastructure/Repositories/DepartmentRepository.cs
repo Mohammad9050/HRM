@@ -18,14 +18,23 @@ public class DepartmentRepository : IDepartmentRepository
     }
 
     public async Task<List<DomainDepartment>> GetAllAsync()
-                => await _context.Departments
-            .Select(e => new DomainDepartment
-            {
-                Id = e.Id,
-                Name = e.Name,
+    {
+        var query = from d in _context.Departments
+                    join employee in _context.Employees on d.Id equals employee.DepartmentId into _employee
+                    from employee in _employee.DefaultIfEmpty()
+                    //let totalSalary = (from e in _context.Employees
+                    //                   where e.DepartmentId == d.Id select e.Salary).Sum()
              
-            })
-            .ToListAsync();
+                    select new DomainDepartment
+                    {
+                        Id = d.Id,
+                        Name = d.Name,
+                        employeeName = employee.FirstName + ' ' + employee.LastName,
+                       // sumSalary = totalSalary
+                    };
+
+        return await query.ToListAsync();
+    }
 
 
     public async Task<DomainDepartment?> GetByIdAsync(int id)
@@ -45,14 +54,36 @@ public class DepartmentRepository : IDepartmentRepository
     public async Task AddAsync(DomainDepartment Department)
     {
         {
-            var dbDepartment = new DbDepartment
+            var tran = _context.Database.BeginTransaction(System.Data.IsolationLevel.ReadUncommitted);
+
+            try
             {
-                Name = Department.Name,
 
-            };
+                var dbDepartment = new DbDepartment
+                {
+                    Name = Department.Name,
 
-            _context.Departments.Add(dbDepartment);
-            await _context.SaveChangesAsync();
+                };
+
+                var dbDepartment2 = new DbDepartment
+                {
+                    Name = Department.Name + "Sample",
+
+                };
+
+                _context.Departments.Add(dbDepartment);
+                _context.Departments.Add(dbDepartment2);
+
+                await _context.SaveChangesAsync();
+                tran.Commit();
+            }
+            catch
+            {
+                tran.Rollback();
+            }
+
+            
+           
         }
     }
 }

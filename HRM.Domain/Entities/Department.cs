@@ -10,5 +10,7 @@ namespace HRM.Domain.Entities
     {
         public int Id { get; set; }
         public string Name { get; set; } = null!;
+        public string employeeName { get; set; } = null!;
+        public decimal sumSalary { get; set; }
     }
 }
