@@ -38,6 +38,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(typeof(HRM.Application.AssemblyReference).Assembly);
+});
+
+
 var app = builder.Build();
 
 app.UseCors("AllowAngularApp");
