@@ -1,65 +1,50 @@
-﻿using HRM.Application.Interfaces;
-//using HRM.Infrastructure.Persistence.Models;
-using Microsoft.EntityFrameworkCore;
+﻿
 using HRM.Domain.Entities;
-using HRM.Infrastructure.Persistence.Models;
-using DomainEmployee = HRM.Domain.Entities.Employee;
-using DbEmployee = HRM.Infrastructure.Persistence.Models.Employee;
+using HRM.Domain.Interfaces;
+using HRM.Domain.Interfaces.Repositories;
+using HRM.Infrastructure.Persistence.Context;
+using Microsoft.EntityFrameworkCore;
 
-namespace HRM.Infrastructure.Repositories;
-
-public class EmployeeRepository : IEmployeeRepository
+namespace HRM.Infrastructure.Persistence.Repositories
 {
-    private readonly HrmContext _context;
-
-    public EmployeeRepository(HrmContext context)
+    public class EmployeeRepository : IEmployeeRepository
     {
-        _context = context;
-    }
+        private readonly HRMDbContext _context;
 
-    public async Task<List<DomainEmployee>> GetAllAsync()
-                => await _context.Employees
-            .Select(e => new DomainEmployee
-            {
-                Id = e.Id,
-                FirstName = e.FirstName,
-                LastName = e.LastName,
-                HireDate = e.HireDate,
-                Salary = e.Salary
-            })
-            .ToListAsync();
-
-
-    public async Task<DomainEmployee?> GetByIdAsync(int id)
-    {
-        var e = await _context.Employees.FindAsync(id);
-        if (e == null) return null;
-
-        return new DomainEmployee
+        public EmployeeRepository(HRMDbContext context)
         {
-            Id = e.Id,
-            FirstName = e.FirstName,
-            LastName = e.LastName,
-            HireDate = e.HireDate,
-            Salary = e.Salary
-        };
-    }
+            _context = context;
+        }
 
-
-    public async Task AddAsync(DomainEmployee employee)
-    {
+        public async Task AddAsync(Employee employee)
         {
-            var dbEmployee = new DbEmployee
-            {
-                FirstName = employee.FirstName,
-                LastName = employee.LastName,
-                HireDate = employee.HireDate,
-                Salary = employee.Salary,
-                DepartmentId = employee.DepartmentId
-            };
+            await _context.Employees.AddAsync(employee);
+        }
 
-            _context.Employees.Add(dbEmployee);
-            await _context.SaveChangesAsync();
+        public Task DeleteAsync(Employee employee)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Employee>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<Employee?> GetByIdAsync(int id)
+        {
+            return await _context.Employees
+                .FirstOrDefaultAsync(e => e.Id == id);
+        }
+
+        public Task SaveChangesAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateAsync(Employee employee)
+        {
+            throw new NotImplementedException();
         }
     }
 }

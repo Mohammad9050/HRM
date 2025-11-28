@@ -1,5 +1,6 @@
-﻿using HRM.Application.Interfaces;
+﻿
 using HRM.Domain.Entities;
+using HRM.Domain.Interfaces.Repositories;
 
 
 namespace HRM.Application.Services;

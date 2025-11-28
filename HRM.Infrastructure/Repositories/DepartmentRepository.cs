@@ -1,10 +1,11 @@
-﻿using HRM.Application.Interfaces;
+﻿
 //using HRM.Infrastructure.Persistence.Models;
 using Microsoft.EntityFrameworkCore;
 using HRM.Domain.Entities;
 using HRM.Infrastructure.Persistence.Models;
 using DomainDepartment = HRM.Domain.Entities.Department;
 using DbDepartment = HRM.Infrastructure.Persistence.Models.Department;
+using HRM.Domain.Interfaces.Repositories;
 
 namespace HRM.Infrastructure.Repositories;
 
@@ -85,5 +86,20 @@ public class DepartmentRepository : IDepartmentRepository
             
            
         }
+    }
+
+    public Task UpdateAsync(DomainDepartment department)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task DeleteAsync(DomainDepartment department)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task SaveChangesAsync()
+    {
+        throw new NotImplementedException();
     }
 }

@@ -1,6 +1,7 @@
-using HRM.Application.Interfaces;
 using HRM.Application.Services;
+using HRM.Domain.Interfaces.Repositories;
 using HRM.Infrastructure.Persistence.Models;
+using HRM.Infrastructure.Persistence.Repositories;
 using HRM.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,6 +34,13 @@ builder.Services.AddCors(options =>
                   .AllowAnyMethod();
         });
 });
+
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(typeof(HRM.Application.AssemblyReference).Assembly);
+});
+
+
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

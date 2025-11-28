@@ -1,29 +1,30 @@
-﻿using HRM.Application.Services;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-
-namespace HRM.Api.Controllers;
+using HRM.Application.Employees.Commands.CreateEmployee;
+using HRM.Application.Employees.Queries.GetAllEmployees;
 
 [ApiController]
 [Route("api/[controller]")]
 public class EmployeeController : ControllerBase
 {
-    private readonly EmployeeService _service;
+    private readonly IMediator _mediator;
 
-    public EmployeeController(EmployeeService service)
+    public EmployeeController(IMediator mediator)
     {
-        _service = service;
+        _mediator = mediator;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetEmployees()
-        => Ok(await _service.GetEmployeesAsync());
+    public async Task<IActionResult> GetAll()
+    {
+        var result = await _mediator.Send(new GetAllEmployeesQuery());
+        return Ok(result);
+    }
 
     [HttpPost]
-    public async Task<IActionResult> AddEmployee(EmployeeDto dto)
+    public async Task<IActionResult> Create(CreateEmployeeCommand command)
     {
-        await _service.AddEmployeeAsync(dto.FirstName, dto.LastName, dto.HireDate, dto.Salary, dto.departmentId);
-        return Ok("Employee added successfully.");
+        var id = await _mediator.Send(command);
+        return Ok(new { id });
     }
 }
-
-public record EmployeeDto(string FirstName, string LastName, DateOnly HireDate, decimal Salary, int departmentId);
